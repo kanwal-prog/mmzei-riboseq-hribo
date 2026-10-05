@@ -1,0 +1,19 @@
+sample,fastq_1,fastq_2,strandedness,type,treatment,pair,GSM,,,
+RNA-NitrogenPlus-rep1,fastq/RNA-NitrogenPlus-rep1.fastq.gz,,forward,rnaseq,NitrogenPlus,1,GSM7703762,,,
+RNA-NitrogenPlus-rep2,fastq/RNA-NitrogenPlus-rep2.fastq.gz,,forward,rnaseq,NitrogenPlus,2,GSM7703763,,,
+RNA-NitrogenMinus-rep1,fastq/RNA-NitrogenMinus-rep1.fastq.gz,,forward,rnaseq,NitrogenMinus,3,GSM7703758,,,
+RNA-NitrogenMinus-rep2,fastq/RNA-NitrogenMinus-rep2.fastq.gz,,forward,rnaseq,NitrogenMinus,4,GSM7703759,,,
+Ribo-NitrogenPlus-rep1,fastq/Ribo-NitrogenPlus-rep1.fastq.gz,,forward,riboseq,NitrogenPlus,1,GSM7703760,,,
+Ribo-NitrogenPlus-rep2,fastq/Ribo-NitrogenPlus-rep2.fastq.gz,,forward,riboseq,NitrogenPlus,2,GSM7703761,,,
+Ribo-NitrogenMinus-rep1,fastq/Ribo-NitrogenMinus-rep1.fastq.gz,,forward,riboseq,NitrogenMinus,3,GSM7703756,,,
+Ribo-NitrogenMinus-rep2,fastq/Ribo-NitrogenMinus-rep2.fastq.gz,,forward,riboseq,NitrogenMinus,4,GSM7703757,,,
+,,,,,,,,,,
+Sample Name,Total reads,Aligned,Uniq aligned,Avg. mapped len,Annotated splices,Mismatch rate,Del rate,Del len,Ins rate,Ins len
+RNA-NitrogenMinus-rep1_1,10.6M,80.7%,48.5%,28.8bp,0.3M,4.8%,0.0%,1.6bp,0.0%,1.1bp
+RNA-NitrogenMinus-rep2_1,12.2M,92.2%,57.2%,31.5bp,0.4M,4.0%,0.1%,1.8bp,0.0%,1.1bp
+RNA-NitrogenPlus-rep1_1,8.8M,94.7%,55.8%,30.3bp,0.1M,3.4%,0.1%,1.8bp,0.0%,1.1bp
+RNA-NitrogenPlus-rep2_1,13.3M,92.2%,49.6%,30.8bp,0.5M,4.5%,0.0%,1.5bp,0.0%,1.1bp
+Ribo-NitrogenMinus-rep1_1,7.2M,77.2%,52.6%,29.7bp,0.3M,3.9%,0.0%,1.9bp,0.0%,1.1bp
+Ribo-NitrogenMinus-rep2_1,12.2M,77.2%,57.8%,29.8bp,1.3M,3.3%,0.0%,1.9bp,0.0%,1.2bp
+Ribo-NitrogenPlus-rep1_1,10.8M,95.1%,60.5%,31.2bp,0.3M,3.1%,0.2%,3.2bp,0.0%,1.1bp
+Ribo-NitrogenPlus-rep2_1,12.3M,95.9%,56.9%,34.5bp,1.4M,3.3%,0.1%,1.6bp,0.0%,1.1bp

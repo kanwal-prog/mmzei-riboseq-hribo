@@ -1,0 +1,41 @@
+# Whitelist approach: ignore everything, then allow only code, config,
+# documentation and small final results. Raw reads, BAM/SAM, tracks,
+# DeepRibo/reparation intermediates, conda/singularity envs (~92 GB) stay local.
+*
+!*/
+
+# Documentation
+!Readme.md
+!Fixes.md
+!.gitignore
+
+# Setup / download scripts
+!installation.sh
+!05_download_mmazei.sh
+!riboseq_simple/*
+
+# HRIBO configuration and rule fixes (upstream HRIBO/ clone is not tracked)
+!hribo_modifications/**
+
+# Final results
+!final_novel_orfs.bed
+!final_consistent_TE_genes.txt
+!xtail_significant.csv
+!riborex_significant.csv
+!deltate_significant.csv
+!deepribo_novel_*.bed
+!SpearmanCorr_readCounts.tab
+!figure.png
+!figures/heatmap_SpearmanCorr_readCounts.pdf
+
+# Never track these, even if matched above
+HRIBO/
+.snakemake/
+.cache/
+__pycache__/
+*.bam
+*.sam
+*.fastq.gz
+*.sif
+*.simg
+*.pt

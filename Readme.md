@@ -1,0 +1,127 @@
+# *Methanosarcina mazei* Gö1 — Ribo-seq / RNA-seq Analysis (Nitrogen Response)
+
+Analysis of ribosome profiling (Ribo-seq) and matched RNA-seq data from
+*Methanosarcina mazei* Gö1, comparing nitrogen-replete (**PLUSN**) and
+nitrogen-limited (**MINUSN**) growth conditions, using the
+[HRIBO](https://github.com/RickGelhausen/HRIBO) Snakemake pipeline.
+
+**Dataset:** GSE240615 / SRP454525 (8 libraries: 2 conditions × RIBO/RNA × 2
+biological replicates)
+**Reference:** RefSeq assembly ASM706v1 (GCF_000007065.1)
+
+---
+
+## Pipeline
+
+Run with [HRIBO](https://github.com/RickGelhausen/HRIBO) v1.8.0 (Snakemake
+8.10.7), covering: adapter trimming, rRNA filtering, genome mapping
+(Segemehl), read counting, coverage tracks, quality control (FastQC/MultiQC),
+novel-ORF prediction (**DeepRibo**, **reparation**), and differential
+translation-efficiency analysis (**xtail**, **riborex**, **deltate**).
+
+Two environment/rule fixes were required to complete the run on this system
+and are documented in [`Fixes.md`](Fixes.md):
+- `reparation.smk` — Swiss-Prot database fetched locally instead of via FTP
+  (upstream FTP server was unreachable / rate-limited).
+- `deepribo.smk` — pretrained model file fetched locally instead of via HTTP.
+
+Several tool conda environments (xtail, riborex, reparation, segemehl, and
+others) also required manual dependency fixes (`libgfortran`, `libtiff`,
+`GenomeInfoDbData`) not resolved by the pipeline's own environment
+definitions — see [`Fixes.md`](Fixes.md).
+
+---
+
+## Results
+
+### 1. Candidate novel / unannotated translated regions
+
+DeepRibo predictions with **zero overlap** to any annotated gene
+(`annotation.gff`), filtered to regions reproducible across **all four**
+sequencing libraries, and independently confirmed by **reparation**'s
+intergenic-ORF calls.
+
+**→ 125 candidate novel ORFs** ([`final_novel_orfs.bed`](final_novel_orfs.bed))
+
+| Evidence | Result |
+|---|---|
+| DeepRibo, single library (MINUSN-1) | 1,643 non-annotated predictions |
+| DeepRibo, reproducible in all 4 libraries | 1,602 |
+| + confirmed by reparation (independent method) | **125** |
+
+### 2. Genes with significant translation-efficiency (TE) change
+
+Genes called significant (adjusted p < 0.05) independently by **all three**
+differential-TE methods (xtail, riborex, deltate).
+
+**→ 14 high-confidence genes**
+([`final_consistent_TE_genes.txt`](final_consistent_TE_genes.txt))
+
+| Method | Significant genes (padj < 0.05) |
+|---|---|
+| xtail | 63 |
+| riborex | 1,291 |
+| deltate | 1,564 |
+| **All three agree** | **14** |
+
+| Locus tag | Old tag | log2FC (TE) | Direction | Adj. p-value | Notes |
+|---|---|---:|:---:|---:|---|
+| MM_RS19400 | — | -8.12 | ↓ | 0.0155 | Largest effect size |
+| MM_RS04225 | MM_0806 | -2.76 | ↓ | 0.00057 | |
+| MM_RS02670 | MM_0503 | -3.17 | ↓ | 0.0053 | |
+| MM_RS00180 | MM_0033 | -4.80 | ↓ | 0.0184 | |
+| MM_RS19080 | — | -4.49 | ↓ | 0.0273 | |
+| MM_RS14605 | MM_2815 | -2.29 | ↓ | 0.0401 | |
+| MM_RS13195 | MM_2548 | +4.22 | ↑ | 0.0051 | |
+| MM_RS13450 | MM_2599 | +3.01 | ↑ | 0.0038 | |
+| MM_RS16320 | MM_3137 | +2.54 | ↑ | 0.0093 | |
+| MM_RS02685 | MM_0506 | +2.27 | ↑ | 0.0324 | |
+| MM_RS18375 | — | +2.57 | ↑ | 0.0370 | |
+| MM_RS04365 | MM_0834 | +2.67 | ↑ | 0.0390 | |
+| MM_RS18790 | — | +2.46 | ↑ | 0.0390 | |
+| MM_RS10125 | MM_1953 | +2.14 | ↑ | 0.0406 | Annotated as a **pseudogene**; shows significant, reproducible translation |
+
+6 genes decrease and 8 increase in translation efficiency under nitrogen
+limitation, a roughly balanced split consistent with active regulatory
+switching rather than a general translational shutdown.
+
+---
+
+## Repository contents
+
+```
+installation.sh                    Installs HRIBO v1.8.0 and sets up the project
+05_download_mmazei.sh              Downloads GSE240615 FASTQs from ENA (md5-checked)
+hribo_modifications/
+  config.yaml                      HRIBO run configuration
+  samples.tsv                      Sample sheet (8 libraries)
+  rules/*.smk, scripts/plot_PCA.py Modified HRIBO files (see Fixes.md)
+  hribo_v1.8.0_fixes.patch         Same changes as a patch against HRIBO v1.8.0
+riboseq_simple/                    Minimal standalone Ribo-seq workflow
+Fixes.md                           Environment/rule fixes applied to this run
+final_novel_orfs.bed               125 candidate novel ORFs (BED)
+final_consistent_TE_genes.txt      14 genes, consistent across 3 DE methods
+deepribo_novel_*.bed               Per-library / consistent DeepRibo novel calls
+xtail_significant.csv              xtail hits, padj < 0.05
+riborex_significant.csv            riborex hits, padj < 0.05
+deltate_significant.csv            deltate hits, padj < 0.05
+SpearmanCorr_readCounts.tab        Replicate read-count correlation
+figure.png, figures/               Correlation heatmap
+```
+
+Raw sequencing data, BAM files, and conda/singularity environments are not
+included (see `.gitignore`) due to size; they can be regenerated by running
+HRIBO with the included `config.yaml` and `samples.tsv` against the public
+GSE240615 dataset.
+
+## Reproducing the analysis
+
+```bash
+bash installation.sh project          # HRIBO v1.8.0
+cd project/HRIBO && git apply ../../hribo_modifications/hribo_v1.8.0_fixes.patch
+cp ../../hribo_modifications/{config.yaml,samples.tsv} .
+bash ../../05_download_mmazei.sh ../fastq
+```
+
+Then run HRIBO's Snakefile as described in the
+[HRIBO manual](https://github.com/RickGelhausen/HRIBO).

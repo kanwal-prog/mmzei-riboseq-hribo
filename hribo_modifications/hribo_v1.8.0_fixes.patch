@@ -1,0 +1,91 @@
+diff --git a/rules/deepribo.smk b/rules/deepribo.smk
+index 0c055ad..1b8afb8 100644
+--- a/rules/deepribo.smk
++++ b/rules/deepribo.smk
+@@ -10,11 +10,11 @@ def read_parameters(filename, idx):
+ 
+ rule deepriboGetModel:
+     input:
+-        storage.http("https://github.com/Biobix/DeepRibo/blob/master/models/DeepRibo_model_v1.pt?raw=true")
++        "DeepRibo_model_v1.pt"
+     output:
+         "deepribo/DeepRibo_model_v1.pt"
+     shell:
+-        "mkdir -p deepribo; mv {input} deepribo/DeepRibo_model_v1.pt"
++        "mkdir -p deepribo; cp {input} deepribo/DeepRibo_model_v1.pt"
+ 
+ 
+ rule asiteOccupancy:
+diff --git a/rules/reparation.smk b/rules/reparation.smk
+index 8af8179..b7dc212 100644
+--- a/rules/reparation.smk
++++ b/rules/reparation.smk
+@@ -1,7 +1,7 @@
+ 
+ rule uniprotDBRetrieve:
+     input:
+-        storage.ftp("ftp://ftp.ebi.ac.uk/pub/databases/uniprot/knowledgebase/uniprot_sprot.fasta.gz")
++        "uniprot_sprot.fasta.gz"
+     output:
+         "uniprotDB/uniprot_sprot.fasta"
+     threads: 1
+diff --git a/rules/rrnafiltering.smk b/rules/rrnafiltering.smk
+index 8bd1ea1..e617321 100644
+--- a/rules/rrnafiltering.smk
++++ b/rules/rrnafiltering.smk
+@@ -8,7 +8,7 @@ rule rrnaannotation:
+     threads: 1
+     shell:
+         """
+-        mkdir -p annotation; awk -F'\\t' '$3 == "rRNA" || $3 == "tRNA"' {input.annotation} | awk -F'\\t' '{{print $1 FS $4-1 FS $5 FS "." FS "." FS $7}}' > {output.annotation}
++        mkdir -p annotation; awk -F'\\t' '$3 == "rRNA" || $3 == "tRNA"' {input.annotation} | awk -F'\\t' '{{print $1 FS $4 FS $5 FS "." FS "." FS $7}}' > {output.annotation}
+         """
+ 
+ rule rrnafilter2:
+diff --git a/scripts/plot_PCA.py b/scripts/plot_PCA.py
+index 920fbe2..60d41ac 100755
+--- a/scripts/plot_PCA.py
++++ b/scripts/plot_PCA.py
+@@ -86,9 +86,7 @@ def plot_scatter_2D(table_df, percentage_variance):
+             mode="markers",
+             marker=dict(color=color_list[i], size=12), #line=dict(color="rgb(0,0,0)", width=2)),
+             name=labels[i],
+-            legendgroup=group_labels[i],
+-            text=group_by_names[i][1]["name"],
+-            hoverinfo="text"
++            legendgroup=group_labels[i]
+         ))
+ 
+     fig.update_layout(
+@@ -124,6 +122,7 @@ def plot_scatter_3D(table_df, percentage_variance):
+     labels = []
+     pca_data = []
+     group_by_names = custom_sort(group_by_names)
++
+     for group in group_by_names:
+         labels.append(group[0])
+         pca_data.append([group[1]["PC1"], group[1]["PC2"], group[1]["PC3"]])
+@@ -156,9 +155,7 @@ def plot_scatter_3D(table_df, percentage_variance):
+             mode="markers",
+             marker=dict(color=color_list[i]), #line=dict(color="rgb(0,0,0)", width=2)),
+             name=labels[i],
+-            legendgroup=group_labels[i],
+-            text=group_by_names[i][1]["name"],
+-            hoverinfo="text"
++            legendgroup=group_labels[i]
+         ))
+ 
+         for j in range(len(pca_data[i][0])):
+diff --git a/templates/config.yaml b/templates/config.yaml
+index 6ee6e44..9451f0c 100644
+--- a/templates/config.yaml
++++ b/templates/config.yaml
+@@ -40,7 +40,7 @@ differentialExpressionSettings:
+   # Features used for counting reads for differential expression
+   features: ["CDS", "sRNA"]
+ 
+-  # comma-seperated list of condition contrasts: treated1-control1,treated2-control2...
++  # comma-seperated list of condition contrasts: treated1_control1,treated2_control2...
+   contrasts: []
+ 
+   # pvalue adjusted cutoff to be used to prefilter the result tables (default = 0.05)

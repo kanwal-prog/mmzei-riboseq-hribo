@@ -1,0 +1,67 @@
+##########################
+# Biological information #
+##########################
+
+biologySettings:
+  # TruSeq 3' read-through adapter
+  adapterS3: "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC"
+  adapterS5: ""
+
+  adapterP3R1: ""
+  adapterP5R1: ""
+  adapterP3R2: ""
+  adapterP5R2: ""
+
+  genome: "genome.fa"
+  annotation: "annotation.gff"
+  samples: "HRIBO/samples.tsv"
+
+  # Archaeal/bacterial alternative initiation codons
+  alternativeStartCodons: ["GTG", "TTG"]
+
+#####################
+# Analysis settings #
+#####################
+
+differentialExpressionSettings:
+  # 8 samples, 2 conditions, 2 biological replicates -> DE is supported.
+  differentialExpression: "on"
+
+  features: ["CDS", "sRNA"]
+
+  # NOTE: separator is a HYPHEN, format "treated-untreated".
+  # Conditions must exist in samples.tsv and must not themselves contain "-".
+  contrasts: ["MINUSN-PLUSN"]
+
+  padjCutoff: 0.05
+  log2fcCutoff: 1.0
+
+predictionSettings:
+  deepribo: "on"
+
+readstatSettings:
+  readLengths: "10-80"
+
+metageneSettings:
+  positionsOutsideORF: 100
+  positionsInORF: 150
+  filteringMethods: ["overlap", "length", "rpkm"]
+  neighboringGenesDistance: 50
+  rpkmThreshold: 10.0
+  lengthCutoff: 50
+  mappingMethods: ["fiveprime", "threeprime"]
+
+  # MATCHES THE BENCH: 20-34 nt was the gel excision window in this study.
+  readLengths: "20-34"
+
+  normalizationMethods: ["raw", "cpm", "window"]
+  outputFormats: ["interactive", "svg"]
+  includePlotlyJS: "integrated"
+  colorList: []
+
+#####################
+# Workflow Settings #
+#####################
+
+workflowSettings:
+  workflow: "full"

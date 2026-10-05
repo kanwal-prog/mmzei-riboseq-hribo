@@ -1,0 +1,15 @@
+input:  './samplesheet.csv'
+outdir: './results'
+fasta:  './genome.fasta'
+gtf:  './genome_fixed2.gtf'
+
+skip_ribocode: true
+skip_ribotish: true
+skip_ribowaltz: true
+skip_plastid: true
+
+translational_efficiency_method: 'deltate'
+ribo_removal_tool: 'bowtie2'
+contrasts: './condition.csv'
+
+
